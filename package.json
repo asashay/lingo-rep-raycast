@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "name": "lingo-rep-raycast-extension",
-  "title": "LingoRep = Translate, Repeat, Memorize",
+  "title": "Lingorep - Translate, Repeat, Memorize",
   "description": "Translate, save and repeat translations to increase your vocabulary",
   "icon": "command-icon.png",
   "author": "oleksandr_oliynyk",
@@ -15,7 +15,7 @@
   "commands": [
     {
       "name": "index",
-      "title": "LingoRep Translate",
+      "title": "Lingorep Translate",
       "subtitle": "Translate, Save and Repeat Translations",
       "description": "Translate, save and repeat text later to remember it with the best spaced repetition system",
       "mode": "view"

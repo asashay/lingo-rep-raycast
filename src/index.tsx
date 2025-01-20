@@ -276,9 +276,9 @@ export default function Command() {
   const itemActions = (
     <ActionPanel>
       {isAuthenticated ? (
-        <Action title="Enter (↵) To Save And Repeat" onAction={saveTranslation} />
+        <Action title="Enter (↵) to Save and Repeat" onAction={saveTranslation} />
       ) : (
-        <Action.Push title={`Connecttt Google Profile To Save`} target={<UserProfilePageGoogle />} />
+        <Action.Push title={`Connect Google Profile to Save`} target={<UserProfilePageGoogle />} />
       )}
     </ActionPanel>
   );
