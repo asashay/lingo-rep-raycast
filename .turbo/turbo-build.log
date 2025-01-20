@@ -1,0 +1,9 @@
+
+> lingo-rep-raycast-extension@0.1.0 build /Users/alex/Work/Projects/alex/lingo-rep-monorepo/apps/lingo-rep-raycast-extension
+> ray build -e dist
+
+[36minfo[39m  -  entry points [src/index.tsx]
+[36minfo[39m  -  compiled entry points
+[36minfo[39m  -  generated extension's TypeScript definitions
+[36minfo[39m  -  checked TypeScript
+[32mready[39m -  built extension successfully
