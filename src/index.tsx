@@ -294,10 +294,10 @@ export default function Command() {
           {!isAuthenticated ? (
             <>
               <Action.Push title={`Connect Google Profile`} target={<UserProfilePageGoogle />} />
-              <Action.Push title={`Connect Github Profile`} target={<UserProfilePageGithub />} />
+              <Action.Push title={`Connect GitHub Profile`} target={<UserProfilePageGithub />} />
             </>
           ) : authProvider === "github" ? (
-            <Action.Push title={`View Github Profile`} target={<UserProfilePageGithub />} />
+            <Action.Push title={`View GitHub Profile`} target={<UserProfilePageGithub />} />
           ) : authProvider === "google" ? (
             <>
               <Action.Push title={`View Google Profile`} target={<UserProfilePageGoogle />} />
