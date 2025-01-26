@@ -24,7 +24,7 @@ function UserProfileComponent({ authProvider }: { authProvider: "github" | "goog
   // TODO: decide on the refresh strategy
 
   const { data: responseData } = useFetch<{ message: string; jwt: string }>(
-    `http://localhost:8787/api/auth/${authProvider}/get-jwt`,
+    `${config.apiURL}/auth/${authProvider}/get-jwt`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

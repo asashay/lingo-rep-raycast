@@ -16,7 +16,6 @@
     {
       "name": "index",
       "title": "Lingorep Translate",
-      "subtitle": "Translate, Save and Repeat Translations",
       "description": "Translate, save and repeat text later to remember it with the best spaced repetition system",
       "mode": "view"
     }
@@ -30,7 +29,6 @@
     "build": "npm run npm:install && ray build -e dist",
     "dev:raycast": "ray develop",
     "dev": "npm run npm:install && npm run copy:shared-packages && npm-run-all --parallel watch:shared-packages dev:raycast",
-    "dev-raycast": "",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
     "publish": "npx @raycast/api@latest publish"
