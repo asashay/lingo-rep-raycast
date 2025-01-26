@@ -278,7 +278,10 @@ export default function Command() {
       {isAuthenticated ? (
         <Action title="Enter (↵) to Save and Repeat" onAction={saveTranslation} />
       ) : (
-        <Action.Push title={`Connect Google Profile to Save`} target={<UserProfilePageGoogle />} />
+        <>
+          <Action.Push title={`Connect Google Profile to Save`} target={<UserProfilePageGoogle />} />
+          <Action.Push title={`Connect GitHub Profile to Save`} target={<UserProfilePageGithub />} />
+        </>
       )}
     </ActionPanel>
   );
