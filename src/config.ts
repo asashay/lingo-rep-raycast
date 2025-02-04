@@ -1,10 +1,7 @@
-const nodeEnv = process.env.NODE_ENV as unknown as "development" | "production";
+let nodeEnv = process.env.NODE_ENV as unknown as "development" | "production" | undefined;
 
-// todo:
-// - check process.env.NODE_ENV in production
-
-console.log("nodeEnv", nodeEnv);
-if (!["development", "production"].includes(nodeEnv)) throw new Error(`Invalid NODE_ENV: ${nodeEnv}`);
+if (nodeEnv !== "development") nodeEnv = "production";
+console.log("node env", nodeEnv);
 
 const allConfigs = {
   development: {
