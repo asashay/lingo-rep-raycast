@@ -15,5 +15,6 @@ const allConfigs = {
     weURL: "chrome-extension://gfmbkbpbncjopblehgldppphpkcmehnk/settings.html",
   },
 };
+// test
 
 export const config = allConfigs[nodeEnv];
