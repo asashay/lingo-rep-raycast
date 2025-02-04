@@ -74,13 +74,13 @@ export const useIsAuthenticated = () => {
         const tokenSet = await githubService.client.getTokens();
         if (tokenSet && !tokenSet.isExpired()) setIsAuthenticated(true);
       } else if (authProvider === "google") {
-        const tokenSet = await googleService.client.getTokens();
+        let tokenSet = await googleService.client.getTokens();
         if (tokenSet?.accessToken) {
           if (tokenSet.refreshToken && tokenSet.isExpired()) {
             await googleService.client.setTokens(await refreshGoogleTokens(tokenSet.refreshToken));
           }
-
-          return setIsAuthenticated(true);
+          tokenSet = await googleService.client.getTokens();
+          if (tokenSet?.accessToken && !tokenSet?.isExpired()) setIsAuthenticated(true);
         }
       } else {
         setIsAuthenticated(false);
