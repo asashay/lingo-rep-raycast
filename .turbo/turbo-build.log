@@ -1,5 +1,5 @@
 
-> lingo-rep-raycast-extension@0.1.0 build /Users/alex/Work/Projects/alex/lingo-rep-monorepo/apps/lingo-rep-raycast-extension
+> lingo-rep-raycast@0.1.0 build /Users/alex/Work/Projects/alex/lingo-rep-monorepo/apps/lingo-rep-raycast
 > ray build -e dist
 
 [36minfo[39m  -  entry points [src/index.tsx]

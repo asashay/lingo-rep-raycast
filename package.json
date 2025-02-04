@@ -2,12 +2,15 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "version": "0.1.0",
   "private": true,
-  "name": "lingo-rep-raycast-extension",
+  "name": "lingo-rep-raycast",
   "title": "Lingorep - Translate, Repeat, Memorize",
   "description": "Translate, save and repeat translations to increase your vocabulary",
   "icon": "command-icon.png",
   "author": "oleksandr_oliynyk",
-  "categories": ["Web", "Productivity"],
+  "categories": [
+    "Web",
+    "Productivity"
+  ],
   "license": "MIT",
   "commands": [
     {
@@ -22,7 +25,7 @@
     "watch:translate": "chokidar '../../packages/translate/dist/**/*' -c 'npm run copy:shared-packages'",
     "watch:lang-options": "chokidar '../../packages/lang-options/dist/**/*' -c 'npm run copy:shared-packages'",
     "watch:shared-packages": "npm-run-all --parallel watch:translate watch:lang-options",
-    "npm:install": "npm install --prefix /Users/alex/Work/Projects/alex/lingo-rep-monorepo/apps/lingo-rep-raycast-extension",
+    "npm:install": "npm install --prefix /Users/alex/Work/Projects/alex/lingo-rep-monorepo/apps/lingo-rep-raycast",
     "build": "npm run npm:install && ray build -e dist",
     "dev:raycast": "ray develop",
     "dev": "npm run npm:install && npm run copy:shared-packages && npm-run-all --parallel watch:shared-packages dev:raycast",
