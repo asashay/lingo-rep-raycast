@@ -205,9 +205,6 @@ function LanguagesDropdown() {
   );
 }
 
-// todo:
-// - add error when reached max translations for free tier or subscription cancelled
-
 export default function Command() {
   const [searchText, setSearchText] = useState("");
   const [translatedText, setTranslatedText] = useState<TranslatedText | null>(null);

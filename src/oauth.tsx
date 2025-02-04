@@ -10,8 +10,9 @@ export const githubService = OAuthService.github({
   scope: "read:user user:email",
 });
 
+export const googleClientId = "797589717240-9353d3f7bnfssqgo6ci8kv4rfai9rfu6.apps.googleusercontent.com";
 export const googleService = OAuthService.google({
-  clientId: "797589717240-9353d3f7bnfssqgo6ci8kv4rfai9rfu6.apps.googleusercontent.com",
+  clientId: googleClientId,
   scope: "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
 });
 
