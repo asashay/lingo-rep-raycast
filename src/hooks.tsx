@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useCachedState } from "@raycast/utils";
-import { OAuth } from "@raycast/api";
+import { OAuth, showToast, Toast } from "@raycast/api";
 import fetch from "node-fetch";
 import { get, post } from "./fetch";
 import { config } from "./config";
@@ -102,28 +102,37 @@ export const useIsAuthenticated = () => {
         }
       };
 
-      if (authProvider === "github") {
-        const tokenSet = await githubService.client.getTokens();
-        if (tokenSet && !tokenSet.isExpired()) {
-          setIsAuthenticated(true);
-          await getJWTAndUserId(tokenSet.accessToken);
-        }
-      } else if (authProvider === "google") {
-        let tokenSet = await googleService.client.getTokens();
-        if (tokenSet?.accessToken) {
-          if (tokenSet.refreshToken && tokenSet.isExpired()) {
-            await googleService.client.setTokens(await refreshGoogleTokens(tokenSet.refreshToken));
-          }
-          tokenSet = await googleService.client.getTokens();
-          if (tokenSet?.accessToken && !tokenSet?.isExpired()) {
-            setIsAuthenticated(true);
-            await getJWTAndUserId(tokenSet.accessToken);
-          }
-        }
-      } else {
+      const resetAuth = () => {
         setIsAuthenticated(false);
         setJWT("");
         setUserId("");
+      };
+      try {
+        if (authProvider === "github") {
+          const tokenSet = await githubService.client.getTokens();
+          if (tokenSet && !tokenSet.isExpired()) {
+            setIsAuthenticated(true);
+            await getJWTAndUserId(tokenSet.accessToken);
+          }
+        } else if (authProvider === "google") {
+          let tokenSet = await googleService.client.getTokens();
+          if (tokenSet?.accessToken) {
+            if (tokenSet.refreshToken && tokenSet.isExpired()) {
+              await googleService.client.setTokens(await refreshGoogleTokens(tokenSet.refreshToken));
+            }
+            tokenSet = await googleService.client.getTokens();
+            if (tokenSet?.accessToken && !tokenSet?.isExpired()) {
+              setIsAuthenticated(true);
+              await getJWTAndUserId(tokenSet.accessToken);
+            }
+          }
+        } else {
+          resetAuth();
+        }
+      } catch (err) {
+        resetAuth();
+
+        showToast({ title: "Auth error", style: Toast.Style.Failure });
       }
     })();
   }, [authProvider]);
