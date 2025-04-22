@@ -1,16 +1,5 @@
 import _ from "lodash";
-import {
-  ActionPanel,
-  Action,
-  List,
-  Form,
-  useNavigation,
-  showToast,
-  showHUD,
-  Toast,
-  PopToRootType,
-  open,
-} from "@raycast/api";
+import { ActionPanel, Action, List, Form, useNavigation, showToast, Toast, open, Icon } from "@raycast/api";
 import { useLocalStorage, useCachedState } from "@raycast/utils";
 
 import { useEffect, useState, useCallback } from "react";
@@ -24,7 +13,7 @@ import {
   targetLangOptionsRaycast,
 } from "./shared-packages/lang-options";
 
-import { UserProfilePageGithub, UserProfilePageGoogle } from "./oauth";
+import { AuthorizationComponent, UserProfilePageGithub, UserProfilePageGoogle } from "./oauth";
 import { post } from "./fetch";
 import { useIsAuthenticated } from "./hooks";
 import { config } from "./config";
@@ -79,6 +68,7 @@ function AddLangSet() {
       actions={
         <ActionPanel>
           <Action.SubmitForm
+            icon={Icon.SaveDocument}
             title="Save Set"
             onSubmit={(values) => {
               const newLangSet = {
@@ -148,11 +138,12 @@ function ManageLangSets() {
           actions={
             lS.label === manageLangSetsLabel ? (
               <ActionPanel>
-                <Action.Push title="Add New Language Set" target={<AddLangSet />} />
+                <Action.Push icon={Icon.Plus} title="Add New Language Set" target={<AddLangSet />} />
               </ActionPanel>
             ) : (
               <ActionPanel>
                 <Action
+                  icon={Icon.Checkmark}
                   title="Select"
                   onAction={() => {
                     changeSelectedLangSet(lS);
@@ -160,6 +151,7 @@ function ManageLangSets() {
                 />
                 {languageSets.length > 2 && (
                   <Action
+                    icon={Icon.Xmark}
                     title="Delete"
                     shortcut={{ modifiers: ["cmd"], key: "d" }}
                     onAction={() => handleDeleteLanguageSet(lS)}
@@ -205,9 +197,6 @@ function LanguagesDropdown() {
   );
 }
 
-// todo:
-// - add error when reached max translations for free tier or subscription cancelled
-
 export default function Command() {
   const [searchText, setSearchText] = useState("");
   const [translatedText, setTranslatedText] = useState<TranslatedText | null>(null);
@@ -221,12 +210,14 @@ export default function Command() {
   const debouncedTranslate = useCallback(
     _.debounce(async (text: string) => {
       try {
-        if (!selected?.sourceLangKey || !selected?.targetLangKey) return console.log("no lang keys");
+        if (!selected?.sourceLangKey || !selected?.targetLangKey)
+          return showToast({ title: "Please select source and target languages", style: Toast.Style.Failure });
 
         const res = await translate(selected?.sourceLangKey, selected?.targetLangKey, text);
         setTranslatedText(res);
       } catch (err) {
-        console.log("error translating", err);
+        showToast({ title: "Error translating text", style: Toast.Style.Failure });
+        console.error("error translating", err);
       }
     }, 1000),
     [selected?.sourceLangKey, selected?.targetLangKey],
@@ -254,8 +245,6 @@ export default function Command() {
         jwt,
       );
       showToast({ title: "Translation saved" });
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      showHUD("Translation saved", { clearRootSearch: true, popToRootType: PopToRootType.Immediate });
     } catch (err) {
       console.error("error saving translation", err);
       if (err instanceof Error && _.includes(err?.message, "free usage limit")) {
@@ -276,9 +265,20 @@ export default function Command() {
   const itemActions = (
     <ActionPanel>
       {isAuthenticated ? (
-        <Action title="Enter (↵) To Save And Repeat" onAction={saveTranslation} />
+        <Action icon={Icon.SaveDocument} title="Enter (↵) to Save and Repeat" onAction={saveTranslation} />
       ) : (
-        <Action.Push title={`Connecttt Google Profile To Save`} target={<UserProfilePageGoogle />} />
+        <>
+          <Action.Push
+            icon={Icon.ArrowRightCircleFilled}
+            title={`Connect Google Profile to Save`}
+            target={<AuthorizationComponent authProvider="google" />}
+          />
+          <Action.Push
+            icon={Icon.ArrowRightCircle}
+            title={`Connect GitHub Profile to Save`}
+            target={<AuthorizationComponent authProvider="github" />}
+          />
+        </>
       )}
     </ActionPanel>
   );
@@ -293,15 +293,23 @@ export default function Command() {
         <ActionPanel>
           {!isAuthenticated ? (
             <>
-              <Action.Push title={`Connect Google Profile`} target={<UserProfilePageGoogle />} />
-              <Action.Push title={`Connect Github Profile`} target={<UserProfilePageGithub />} />
+              <Action.Push
+                icon={Icon.ArrowRightCircleFilled}
+                title={`Connect Google Profile`}
+                target={<AuthorizationComponent authProvider="google" />}
+              />
+              <Action.Push
+                icon={Icon.ArrowRightCircle}
+                title={`Connect GitHub Profile`}
+                target={<AuthorizationComponent authProvider="github" />}
+              />
             </>
           ) : authProvider === "github" ? (
-            <Action.Push title={`View Github Profile`} target={<UserProfilePageGithub />} />
+            <Action.Push icon={Icon.Person} title={`View GitHub Profile`} target={<UserProfilePageGithub />} />
           ) : authProvider === "google" ? (
             <>
-              <Action.Push title={`View Google Profile`} target={<UserProfilePageGoogle />} />
-              <Action.OpenInBrowser url={`${config.lpURL}/learn`} title="Learn & Repeat" />
+              <Action.Push icon={Icon.Person} title={`View Google Profile`} target={<UserProfilePageGoogle />} />
+              <Action.OpenInBrowser icon={Icon.Globe} url={`${config.lpURL}/learn`} title="Learn & Repeat" />
             </>
           ) : null}
         </ActionPanel>

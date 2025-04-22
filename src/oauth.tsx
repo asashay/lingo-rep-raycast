@@ -1,7 +1,7 @@
 import _ from "lodash";
-import { useEffect } from "react";
-import { Detail, ActionPanel, Action } from "@raycast/api";
-import { OAuthService, withAccessToken, getAccessToken, useCachedState, useFetch } from "@raycast/utils";
+import { useEffect, useState } from "react";
+import { Detail, ActionPanel, Action, showToast, popToRoot, Icon } from "@raycast/api";
+import { OAuthService, withAccessToken, useCachedState, showFailureToast } from "@raycast/utils";
 
 import { useGet } from "./hooks";
 import { config } from "./config";
@@ -10,44 +10,17 @@ export const githubService = OAuthService.github({
   scope: "read:user user:email",
 });
 
+export const googleClientId = "797589717240-9353d3f7bnfssqgo6ci8kv4rfai9rfu6.apps.googleusercontent.com";
 export const googleService = OAuthService.google({
-  clientId: "797589717240-9353d3f7bnfssqgo6ci8kv4rfai9rfu6.apps.googleusercontent.com",
+  clientId: googleClientId,
   scope: "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
 });
 
-function UserProfileComponent({ authProvider }: { authProvider: "github" | "google" }) {
-  const { token } = getAccessToken();
-  const [, setJWT] = useCachedState<string>("jwt", "");
-  const [, setAuthProvider] = useCachedState<string>("authProvider", "");
-  const [, setUserId] = useCachedState<string>("userId", "");
-
-  // TODO: decide on the refresh strategy
-
-  const { data: responseData } = useFetch<{ message: string; jwt: string }>(
-    `http://localhost:8787/api/auth/${authProvider}/get-jwt`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-  );
-
-  useEffect(() => {
-    if (responseData?.jwt) {
-      setJWT(responseData.jwt);
-      setAuthProvider(authProvider);
-    } else {
-      console.log("No JWT received");
-      setJWT("");
-      setAuthProvider("");
-    }
-  }, [responseData?.jwt]);
+function UserProfileDetails() {
+  // TODO:
+  // - decide on the refresh strategy for github
 
   const { isLoading, response } = useGet("/auth/profile");
-
-  useEffect(() => {
-    setUserId(_.get(response, "user.id", ""));
-  }, [response]);
 
   const markdown = `
   <img src="${_.get(response, "user.imageUrl")}" width="300" height="300">
@@ -79,11 +52,11 @@ function UserProfileComponent({ authProvider }: { authProvider: "github" | "goog
       actions={
         shouldUpgrade ? (
           <ActionPanel title="Upgrade Subscription">
-            <Action.OpenInBrowser url={`${config.lpURL}/#pricing`} title="Upgrade Subscription" />
+            <Action.OpenInBrowser icon={Icon.Star} url={`${config.lpURL}/#pricing`} title="Upgrade Subscription" />
           </ActionPanel>
         ) : (
           <ActionPanel title="Learn & Repeat Words">
-            <Action.OpenInBrowser url={`${config.lpURL}/learn`} title="Learn & Repeat Words" />
+            <Action.OpenInBrowser icon={Icon.Globe} url={`${config.lpURL}/learn`} title="Learn & Repeat Words" />
           </ActionPanel>
         )
       }
@@ -91,9 +64,35 @@ function UserProfileComponent({ authProvider }: { authProvider: "github" | "goog
   );
 }
 
-export const UserProfilePageGithub = withAccessToken(githubService)(() => (
-  <UserProfileComponent authProvider="github" />
-));
-export const UserProfilePageGoogle = withAccessToken(googleService)(() => (
-  <UserProfileComponent authProvider="google" />
-));
+export const UserProfilePageGithub = withAccessToken(githubService)(() => <UserProfileDetails />);
+export const UserProfilePageGoogle = withAccessToken(googleService)(() => <UserProfileDetails />);
+
+export function AuthorizationComponent({ authProvider }: { authProvider: "github" | "google" }) {
+  const [, setAuthProvider] = useCachedState<string>("authProvider", "");
+
+  const service = (() => {
+    if (authProvider === "github") return githubService;
+    else if (authProvider === "google") return googleService;
+    else throw new Error("Invalid auth provider");
+  })();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    setAuthProvider(authProvider);
+    (async () => {
+      try {
+        await service.authorize();
+        setIsLoading(false);
+        await showToast({ title: "Authorization Successful" });
+      } catch (error) {
+        console.error("error authorizing user", error);
+        setIsLoading(false);
+        await showFailureToast({ title: "Authorization Failed" });
+      } finally {
+        popToRoot();
+      }
+    })();
+  }, [service]);
+
+  return <Detail isLoading={isLoading} />;
+}
