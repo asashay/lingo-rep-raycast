@@ -80,6 +80,7 @@ function AddLangSet() {
         <ActionPanel>
           <Action.SubmitForm
             icon={Icon.SaveDocument}
+            icon={Icon.SaveDocument}
             title="Save Set"
             onSubmit={(values) => {
               const newLangSet = {
@@ -150,10 +151,12 @@ function ManageLangSets() {
             lS.label === manageLangSetsLabel ? (
               <ActionPanel>
                 <Action.Push icon={Icon.Plus} title="Add New Language Set" target={<AddLangSet />} />
+                <Action.Push icon={Icon.Plus} title="Add New Language Set" target={<AddLangSet />} />
               </ActionPanel>
             ) : (
               <ActionPanel>
                 <Action
+                  icon={Icon.Checkmark}
                   icon={Icon.Checkmark}
                   title="Select"
                   onAction={() => {
@@ -162,6 +165,7 @@ function ManageLangSets() {
                 />
                 {languageSets.length > 2 && (
                   <Action
+                    icon={Icon.Xmark}
                     icon={Icon.Xmark}
                     title="Delete"
                     shortcut={{ modifiers: ["cmd"], key: "d" }}
@@ -304,7 +308,20 @@ export default function Command() {
     <ActionPanel>
       {isAuthenticated ? (
         <Action icon={Icon.SaveDocument} title="Enter (↵) to Save and Repeat" onAction={saveTranslation} />
+        <Action icon={Icon.SaveDocument} title="Enter (↵) to Save and Repeat" onAction={saveTranslation} />
       ) : (
+        <>
+          <Action.Push
+            icon={Icon.ArrowRightCircleFilled}
+            title={`Connect Google Profile to Save`}
+            target={<AuthorizationComponent authProvider="google" />}
+          />
+          <Action.Push
+            icon={Icon.ArrowRightCircle}
+            title={`Connect GitHub Profile to Save`}
+            target={<AuthorizationComponent authProvider="github" />}
+          />
+        </>
         <>
           <Action.Push
             icon={Icon.ArrowRightCircleFilled}
@@ -348,11 +365,24 @@ export default function Command() {
                 title={`Connect GitHub Profile`}
                 target={<AuthorizationComponent authProvider="github" />}
               />
+              <Action.Push
+                icon={Icon.ArrowRightCircleFilled}
+                title={`Connect Google Profile`}
+                target={<AuthorizationComponent authProvider="google" />}
+              />
+              <Action.Push
+                icon={Icon.ArrowRightCircle}
+                title={`Connect GitHub Profile`}
+                target={<AuthorizationComponent authProvider="github" />}
+              />
             </>
           ) : authProvider === "github" ? (
             <Action.Push icon={Icon.Person} title={`View GitHub Profile`} target={<UserProfilePageGithub />} />
+            <Action.Push icon={Icon.Person} title={`View GitHub Profile`} target={<UserProfilePageGithub />} />
           ) : authProvider === "google" ? (
             <>
+              <Action.Push icon={Icon.Person} title={`View Google Profile`} target={<UserProfilePageGoogle />} />
+              <Action.OpenInBrowser icon={Icon.Globe} url={`${config.lpURL}/learn`} title="Learn & Repeat" />
               <Action.Push icon={Icon.Person} title={`View Google Profile`} target={<UserProfilePageGoogle />} />
               <Action.OpenInBrowser icon={Icon.Globe} url={`${config.lpURL}/learn`} title="Learn & Repeat" />
             </>
